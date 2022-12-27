@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -46,7 +46,6 @@ public partial class App : Application
             AppConfig = appConfigurations;
     }
 
-    private const string DllName = @"C:\WorkSpace\VtkProject\x64\Debug\Visualizer.dll";
 
     /// <param name="args">Details about the launch request and process.</param>
     protected override void OnLaunched(LaunchActivatedEventArgs args) =>

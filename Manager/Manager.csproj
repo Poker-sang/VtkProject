@@ -54,6 +54,8 @@
     <ItemGroup>
       <Folder Include="Attributes\" />
       <Folder Include="Interfaces\" />
+      <Folder Include="Models\" />
+      <Folder Include="Enums\" />
     </ItemGroup>
     <ItemGroup>
       <Page Update="Views\IndexPage.xaml">

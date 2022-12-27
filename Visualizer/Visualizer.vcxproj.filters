@@ -26,5 +26,17 @@
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Hash.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VtkHelper.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DllExport.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>
