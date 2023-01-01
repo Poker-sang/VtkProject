@@ -7,8 +7,5 @@ public partial record AppConfig
 {
     public int Theme { get; set; }
 
-    public AppConfig()
-    {
-        
-    }
+    public AppConfig() { }
 }

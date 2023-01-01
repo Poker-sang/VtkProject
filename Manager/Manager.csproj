@@ -14,10 +14,6 @@
         <LangVersion>Preview</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
-    <ItemGroup>
-        <None Remove="Views\IndexPage.xaml" />
-        <None Remove="Views\SettingsPage.xaml" />
-    </ItemGroup>
 
     <ItemGroup>
         <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -40,32 +36,23 @@
         <Manifest Include="$(ApplicationManifest)" />
     </ItemGroup>
 
-    <!-- 
-    Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
-    Tools extension to be activated for this project even if the Windows App SDK Nuget
-    package has not yet been restored.
-  -->
-    <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-        <ProjectCapability Include="Msix" />
-    </ItemGroup>
-    <ItemGroup>
-        <Folder Include="Attributes\" />
-        <Folder Include="Interfaces\" />
-        <Folder Include="Models\" />
-        <Folder Include="Enums\" />
-        <Folder Include="Services\ExtensionMethods\" />
-    </ItemGroup>
     <ItemGroup>
         <Page Update="Views\IndexPage.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
-    </ItemGroup>
-    <ItemGroup>
         <Page Update="Views\SettingsPage.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
     </ItemGroup>
 
+    <!-- 
+    Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
+    Tools extension to be activated for this project even if the Windows App SDK Nuget
+    package has not yet been restored.
+    -->
+    <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+        <ProjectCapability Include="Msix" />
+    </ItemGroup>
     <!-- 
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution 
     Explorer "Package and Publish" context menu entry to be enabled for this project even if 

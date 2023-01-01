@@ -19,7 +19,7 @@
                 Margin="0,15,0,0"
                 VerticalAlignment="Top"
                 Style="{StaticResource CaptionTextBlockStyle}"
-                Text="VtkProject" />
+                Text="{x:Bind helper:CurrentContext.Title}" />
         </Border>
         <NavigationView
             x:Name="NavigationView"
