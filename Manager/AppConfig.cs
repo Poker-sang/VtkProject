@@ -1,4 +1,4 @@
-﻿using Manager.Attributes;
+using WinUI3Utilities.Attributes;
 
 namespace Manager;
 
@@ -6,4 +6,9 @@ namespace Manager;
 public partial record AppConfig
 {
     public int Theme { get; set; }
+
+    public AppConfig()
+    {
+        
+    }
 }

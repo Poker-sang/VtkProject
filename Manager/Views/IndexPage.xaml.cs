@@ -21,5 +21,4 @@ public sealed partial class IndexPage : Page, ITypeGetter
         VisualizerDllImport.SetData2D(data, width);
         var a = VisualizerDllImport.Show2D();
     }
-
 }

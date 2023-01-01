@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Manager.Services;
 using Microsoft.UI;
+using WinUI3Utilities;
 
 namespace Manager.Views;
 
@@ -11,15 +11,16 @@ public partial class SettingsPage : Page
 
     private void OnThemeChecked(object sender, RoutedEventArgs e)
     {
-        var selectedTheme = (int)((FrameworkElement)sender).Tag switch
+        var selectedTheme = sender.GetTag<int>() switch
         {
             1 => ElementTheme.Light,
             2 => ElementTheme.Dark,
             _ => ElementTheme.Default
         };
 
-        // 内含 App.AppConfiguration.Theme = selectedTheme;
-        ThemeHelper.RootTheme = selectedTheme;
+        if (CurrentContext.Window.Content is FrameworkElement rootElement)
+            rootElement.RequestedTheme = selectedTheme;
+
         Application.Current.Resources["WindowCaptionForeground"] = selectedTheme switch
         {
             ElementTheme.Dark => Colors.White,
@@ -27,8 +28,8 @@ public partial class SettingsPage : Page
             _ => Application.Current.RequestedTheme is ApplicationTheme.Dark ? Colors.White : Colors.Black
         };
 
-        TitleBarHelper.TriggerTitleBarRepaint();
+        App.AppConfig.Theme = (int)selectedTheme;
+
         AppContext.SaveConfiguration(App.AppConfig);
     }
-    
 }

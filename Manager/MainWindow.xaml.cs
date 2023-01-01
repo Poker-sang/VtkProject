@@ -5,8 +5,8 @@ using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Windows.Foundation.Metadata;
 using Manager.Views;
+using WinUI3Utilities;
 
 namespace Manager;
 
@@ -16,11 +16,9 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        // 加载窗口后设置标题，拖拽区域才能达到原定效果
-        ExtendsContentIntoTitleBar = true;
-        SetTitleBar(AppTitleBar);
-        Title = nameof(Manager);
-        // TODO: Microsoft.WindowsAppSDK 1.2后，最小化的NavigationView没有高度
+        CurrentContext.TitleBar = TitleBar;
+        CurrentContext.TitleTextBlock = TitleTextBlock;
+        // SetTitleBar(TitleBar);
         App.RootNavigationView = NavigationView;
         App.RootFrame = NavigateFrame;
     }
@@ -54,46 +52,4 @@ public sealed partial class MainWindow : Window
             GC.Collect();
         }
     }
-
-    #region AppTitle相关
-
-    private void PaneClosing(NavigationView sender, NavigationViewPaneClosingEventArgs e) => UpdateAppTitleMargin(sender);
-
-    private void PaneOpening(NavigationView sender, object e) => UpdateAppTitleMargin(sender);
-
-    private void DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs e)
-    {
-        var currentMargin = AppTitleBar.Margin;
-        AppTitleBar.Margin = sender.DisplayMode is NavigationViewDisplayMode.Minimal
-            ? new() { Left = sender.CompactPaneLength * 2, Top = currentMargin.Top, Right = currentMargin.Right, Bottom = currentMargin.Bottom }
-            : new Thickness { Left = sender.CompactPaneLength, Top = currentMargin.Top, Right = currentMargin.Right, Bottom = currentMargin.Bottom };
-
-        UpdateAppTitleMargin(sender);
-    }
-
-    private void UpdateAppTitleMargin(NavigationView sender)
-    {
-        const int smallLeftIndent = 4, largeLeftIndent = 24;
-
-        if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7))
-        {
-            AppTitle.TranslationTransition = new Vector3Transition();
-
-            AppTitle.Translation = (sender.DisplayMode is NavigationViewDisplayMode.Expanded && sender.IsPaneOpen) ||
-                     sender.DisplayMode is NavigationViewDisplayMode.Minimal
-                ? new(smallLeftIndent, 0, 0)
-                : new System.Numerics.Vector3(largeLeftIndent, 0, 0);
-        }
-        else
-        {
-            var currentMargin = AppTitle.Margin;
-
-            AppTitle.Margin = (sender.DisplayMode is NavigationViewDisplayMode.Expanded && sender.IsPaneOpen) ||
-                     sender.DisplayMode is NavigationViewDisplayMode.Minimal
-                ? new() { Left = smallLeftIndent, Top = currentMargin.Top, Right = currentMargin.Right, Bottom = currentMargin.Bottom }
-                : new Thickness { Left = largeLeftIndent, Top = currentMargin.Top, Right = currentMargin.Right, Bottom = currentMargin.Bottom };
-        }
-    }
-
-    #endregion
 }
