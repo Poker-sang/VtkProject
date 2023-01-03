@@ -87,4 +87,4 @@ VTK_MODULE_INIT(vtkInteractionStyle);
 
 #define C_EXPORT extern "C" __declspec(dllexport)
 
-#endif //PCH_H
+#endif // PCH_H

@@ -1,5 +1,4 @@
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using WinUI3Utilities;
 
 namespace Manager;
@@ -7,8 +6,6 @@ namespace Manager;
 public partial class App : Application
 {
     public static AppConfig AppConfig { get; private set; } = null!;
-    public static NavigationView RootNavigationView { get; set; } = null!;
-    public static Frame RootFrame { get; set; } = null!;
 
     public App()
     {
@@ -16,20 +13,12 @@ public partial class App : Application
         CurrentContext.App = this;
         CurrentContext.Title = nameof(Manager);
         AppContext.InitializeConfigurationContainer();
-        if (AppContext.LoadConfiguration() is not { } appConfigurations
-#if FIRST_TIME
-        || true
-#endif
-           )
-            AppConfig = new AppConfig();
-        else
-            AppConfig = appConfigurations;
+        AppConfig = AppContext.LoadConfiguration() ?? new AppConfig();
     }
 
-    /// <param name="args">Details about the launch request and process.</param>
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         CurrentContext.Window = new MainWindow();
-        AppHelper.Initialize(AppHelper.PredetermineEstimatedWindowSize());
+        AppHelper.Initialize(WindowHelper.PredetermineEstimatedWindowSize());
     }
 }

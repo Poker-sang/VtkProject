@@ -1,5 +1,5 @@
-#pragma once
 #include "pch.h";
+#pragma once
 export module VtkHelper;
 
 export template <class T>

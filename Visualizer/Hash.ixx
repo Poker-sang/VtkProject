@@ -1,5 +1,5 @@
-#pragma once
 #include "pch.h"
+#pragma once
 export module Hash;
 
 typedef std::uint64_t Hash;

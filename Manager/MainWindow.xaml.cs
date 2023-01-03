@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation and Contributors.
-// Licensed under the MIT License.
-
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
@@ -19,15 +16,15 @@ public sealed partial class MainWindow : Window
         CurrentContext.TitleBar = TitleBar;
         CurrentContext.TitleTextBlock = TitleTextBlock;
         // SetTitleBar(TitleBar);
-        App.RootNavigationView = NavigationView;
-        App.RootFrame = NavigateFrame;
+        CurrentContext.NavigationView = NavigationView;
+        CurrentContext.Frame = NavigateFrame;
     }
 
     private void Loaded(object sender, RoutedEventArgs e)
     {
         ((NavigationViewItem)NavigationView.SettingsItem).Tag = typeof(SettingsPage);
 
-        _ = NavigateFrame.Navigate(typeof(IndexPage));
+        NavigationHelper.GotoPage<IndexPage>();
         NavigationView.SelectedItem = NavigationView.MenuItems[0];
     }
 
@@ -46,10 +43,6 @@ public sealed partial class MainWindow : Window
     private void ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs e)
     {
         if (e.InvokedItemContainer.Tag is Type item && item != NavigateFrame.Content.GetType())
-        {
-            _ = NavigateFrame.Navigate(item);
-            NavigationView.IsBackEnabled = true;
-            GC.Collect();
-        }
+            NavigationHelper.GotoPage(item);
     }
 }
