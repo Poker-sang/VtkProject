@@ -6,7 +6,7 @@ import Hash;
 import VtkHelper;
 import Config;
 
-C_EXPORT void Show2D()
+C_EXPORT vtkRenderWindowInteractor* GetInteractor(const int hWnd, const int x, const int y, const int width, const int height)
 {
     using namespace Data2D;
     using namespace Config;
@@ -100,17 +100,47 @@ C_EXPORT void Show2D()
     // ren->AddActor(contourActor);
     renderer->SetBackground(colors->GetColor3d("Burlywood").GetData());
 
-    // 代表显示场景的窗口，和操作平台有关系
-    const auto renderWindow = New<vtkRenderWindow>();
-    renderWindow->SetSize(WindowWidth, WindowHeight);
-    renderWindow->AddRenderer(renderer);
+    const auto win = CreateWindowEx(WS_EX_LAYERED, L"Static", L"", WS_VISIBLE | WS_CHILD, x, y, width, height, reinterpret_cast<HWND>(hWnd), nullptr, nullptr, nullptr);
+    SetLayeredWindowAttributes(win, 0, 255, LWA_ALPHA);
 
+    // 代表显示场景的窗口，和操作平台有关系
+    const auto renderWindow = New<vtkWin32OpenGLRenderWindow>();
+    renderWindow->SetWindowId(win);
+    // renderWindow->SetSize(WindowWidth, WindowHeight);
+    renderWindow->AddRenderer(renderer);
     // 提供键盘、鼠标等交互机制
-    const auto renderWindowInteractor = New<vtkRenderWindowInteractor>();
+    const auto renderWindowInteractor = vtkRenderWindowInteractor::New();
     renderWindowInteractor->SetRenderWindow(renderWindow);
     // 控制旋转、缩放、移动 的交互样式
     const auto style = New<vtkInteractorStyleTrackballCamera>();
     renderWindowInteractor->SetInteractorStyle(style);
-    renderWindow->Render();
-    renderWindowInteractor->Start();
+    // renderWindow->SetParentId(reinterpret_cast<HWND>(hWnd));
+    // vtkSetWindowLong(renderWindow->GetWindowId(), GWL_EXSTYLE, (~WS_EX_TRANSPARENT & vtkGetWindowLong(renderWindow->GetWindowId(), GWL_EXSTYLE)) | WS_EX_LAYERED);
+    // vtkSetWindowLong(renderWindow->GetWindowId(), GWL_STYLE, WS_CHILD | vtkGetWindowLong(renderWindow->GetWindowId(), GWL_EXSTYLE));
+    // SetWindowPos(renderWindow->GetWindowId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+    // renderWindow->Render();
+    // renderWindowInteractor->Start();
+    renderWindow->Initialize();
+    return renderWindowInteractor;
+}
+
+C_EXPORT int GetWindowFromInteractor(vtkRenderWindowInteractor* interactor)
+{
+    const auto window = static_cast<vtkWin32OpenGLRenderWindow*>(interactor->GetRenderWindow());
+    return reinterpret_cast<int>(window->GetWindowId());
+}
+
+C_EXPORT void Render(vtkRenderWindowInteractor* interactor)
+{
+    interactor->Start();
+}
+
+C_EXPORT void Render2(vtkRenderWindowInteractor* interactor)
+{
+    interactor->GetRenderWindow()->Render();
+}
+
+C_EXPORT void ReleaseObject(vtkObjectBase* obj)
+{
+    obj->Delete();
 }

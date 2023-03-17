@@ -5,7 +5,6 @@ using Manager.Models;
 using Manager.Services.VisualizerDllImport;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using WinUI3Utilities;
 
 namespace Manager.Views;
 
@@ -21,7 +20,7 @@ public sealed partial class IndexPage : Page, ITypeGetter
         var data = file.GetDataFromFile(out var width, out var height);
         SetData2D.SetElevation(data, width);
         SetData2D.SetScalarFromElevation();
-        SetConfig.SetCellType(CellType.Vertex);
-        ShowData2D.Show2D();
+        SetConfig.SetCellType(CellType.Line);
+        ShowData2D.Show2D(0);
     }
 }

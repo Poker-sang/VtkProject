@@ -10,15 +10,14 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
-        CurrentContext.App = this;
         CurrentContext.Title = nameof(Manager);
         AppContext.InitializeConfigurationContainer();
         AppConfig = AppContext.LoadConfiguration() ?? new AppConfig();
     }
 
-    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    protected override void OnLaunched(LaunchActivatedEventArgs e)
     {
-        CurrentContext.Window = new MainWindow();
-        AppHelper.Initialize(WindowHelper.PredetermineEstimatedWindowSize());
+        _ = new MainWindow();
+        AppHelper.Initialize(WindowHelper.EstimatedWindowSize());
     }
 }
