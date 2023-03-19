@@ -1,4 +1,4 @@
-#include "pch.h";
+#include "pch.h"
 #pragma once
 export module ShowData2D;
 
@@ -6,7 +6,21 @@ import Hash;
 import VtkHelper;
 import Config;
 
-C_EXPORT vtkRenderWindowInteractor* GetInteractor(const int hWnd, const int x, const int y, const int width, const int height)
+class TimerCallback final : public vtkCommand {
+public:
+    explicit TimerCallback(vtkActor* actor) { Actor = actor; }
+
+    void Execute(vtkObject* caller, unsigned long eventId, void* callData) override
+    {
+        if (TimerEvent == eventId) {
+            Actor->RotateX(30);
+            dynamic_cast<vtkWin32RenderWindowInteractor*>(caller)->Render();
+        }
+    }
+    vtkActor* Actor;
+};
+
+C_EXPORT vtkWin32RenderWindowInteractor* GetInterActor(const HWND hWnd, const int x, const int y, const int width, const int height)
 {
     using namespace Data2D;
     using namespace Config;
@@ -42,7 +56,8 @@ C_EXPORT vtkRenderWindowInteractor* GetInteractor(const int hWnd, const int x, c
                 rMin = tempScalar;
                 rMax = tempScalar;
                 first = false;
-            } else {
+            }
+            else {
                 rMin = std::min(tempScalar, rMin);
                 rMax = std::max(tempScalar, rMax);
             }
@@ -100,7 +115,7 @@ C_EXPORT vtkRenderWindowInteractor* GetInteractor(const int hWnd, const int x, c
     // ren->AddActor(contourActor);
     renderer->SetBackground(colors->GetColor3d("Burlywood").GetData());
 
-    const auto win = CreateWindowEx(WS_EX_LAYERED, L"Static", L"", WS_VISIBLE | WS_CHILD, x, y, width, height, reinterpret_cast<HWND>(hWnd), nullptr, nullptr, nullptr);
+    const auto win = CreateWindowEx(WS_EX_LAYERED, L"Static", L"", WS_VISIBLE | WS_CHILD, x, y, width, height, hWnd, nullptr, nullptr, nullptr);
     SetLayeredWindowAttributes(win, 0, 255, LWA_ALPHA);
 
     // 代表显示场景的窗口，和操作平台有关系
@@ -109,35 +124,40 @@ C_EXPORT vtkRenderWindowInteractor* GetInteractor(const int hWnd, const int x, c
     // renderWindow->SetSize(WindowWidth, WindowHeight);
     renderWindow->AddRenderer(renderer);
     // 提供键盘、鼠标等交互机制
-    const auto renderWindowInteractor = vtkRenderWindowInteractor::New();
+    const auto renderWindowInteractor = vtkWin32RenderWindowInteractor::New();
     renderWindowInteractor->SetRenderWindow(renderWindow);
+    renderWindowInteractor->Initialize();
     // 控制旋转、缩放、移动 的交互样式
-    const auto style = New<vtkInteractorStyleTrackballCamera>();
-    renderWindowInteractor->SetInteractorStyle(style);
+   // const auto style = New<vtkInteractorStyleTrackballCamera>();
+
+    auto cb = new TimerCallback(actor);
+    renderWindowInteractor->AddObserver(vtkCommand::TimerEvent, cb);
+    renderWindowInteractor->CreateRepeatingTimer(100);
     // renderWindow->SetParentId(reinterpret_cast<HWND>(hWnd));
     // vtkSetWindowLong(renderWindow->GetWindowId(), GWL_EXSTYLE, (~WS_EX_TRANSPARENT & vtkGetWindowLong(renderWindow->GetWindowId(), GWL_EXSTYLE)) | WS_EX_LAYERED);
     // vtkSetWindowLong(renderWindow->GetWindowId(), GWL_STYLE, WS_CHILD | vtkGetWindowLong(renderWindow->GetWindowId(), GWL_EXSTYLE));
     // SetWindowPos(renderWindow->GetWindowId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
     // renderWindow->Render();
     // renderWindowInteractor->Start();
-    renderWindow->Initialize();
     return renderWindowInteractor;
 }
 
-C_EXPORT int GetWindowFromInteractor(vtkRenderWindowInteractor* interactor)
+
+
+C_EXPORT HWND GetWindowFromInterActor(vtkRenderWindowInteractor* interActor)
 {
-    const auto window = static_cast<vtkWin32OpenGLRenderWindow*>(interactor->GetRenderWindow());
-    return reinterpret_cast<int>(window->GetWindowId());
+    const auto window = static_cast<vtkWin32OpenGLRenderWindow*>(interActor->GetRenderWindow());
+    return window->GetWindowId();
 }
 
-C_EXPORT void Render(vtkRenderWindowInteractor* interactor)
+C_EXPORT void Render(vtkRenderWindowInteractor* interActor)
 {
-    interactor->Start();
+    interActor->Render();
 }
 
-C_EXPORT void Render2(vtkRenderWindowInteractor* interactor)
+C_EXPORT void Start(vtkRenderWindowInteractor* interActor)
 {
-    interactor->GetRenderWindow()->Render();
+    interActor->Start();
 }
 
 C_EXPORT void ReleaseObject(vtkObjectBase* obj)

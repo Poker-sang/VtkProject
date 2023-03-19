@@ -6,7 +6,7 @@
     xmlns:local="using:Manager.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="Transparent"
-    NavigationCacheMode="Required"
+    Unloaded="OnUnloaded"
     mc:Ignorable="d">
 
     <Grid>

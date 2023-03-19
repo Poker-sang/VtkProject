@@ -14,6 +14,8 @@ public sealed partial class IndexPage : Page, ITypeGetter
 
     public static Type TypeGetter => typeof(IndexPage);
 
+    private nint _interActor = 0;
+
     private void NewTap(object s, RoutedEventArgs e)
     {
         var file = new FileModel("dem.grd", @"C:\WorkSpace\VtkProject\Manager\Assets", FileExtension.Grd);
@@ -21,6 +23,13 @@ public sealed partial class IndexPage : Page, ITypeGetter
         SetData2D.SetElevation(data, width);
         SetData2D.SetScalarFromElevation();
         SetConfig.SetCellType(CellType.Line);
-        ShowData2D.Show2D(0);
+        _interActor = ShowData2D.GetInterActor(0, 100, 100, 500, 500);
+        ShowData2D.Start(_interActor);
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        if (_interActor is not 0)
+            ShowData2D.ReleaseObject(_interActor);
     }
 }
